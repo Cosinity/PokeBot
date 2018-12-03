@@ -2,8 +2,9 @@ import requests
 import json
 import websocket
 from collections import OrderedDict
-from project.RandomAgent import Agent as RandomAgent
-from project.QLearningAgent import Agent as QLearningAgent
+from FeatureExtractor import DefaultFeatureExtractor
+from RandomAgent import Agent as RandomAgent
+from QLearningAgent import Agent as QLearningAgent
 
 # Globals
 STAT_DICT = {
@@ -154,7 +155,8 @@ class State:
                  friendly_active_mon=None, opp_active_mon=None,
                  weather='none', weather_turns=float('inf'),
                  field_conditions=None,
-                 friendly_conditions=None, opp_conditions=None):
+                 friendly_conditions=None, opp_conditions=None,
+                 feat_extractor=DefaultFeatureExtractor):
         # Dict or None
         self.friendly_active_mon = friendly_active_mon
         # Dict or None
@@ -186,9 +188,11 @@ class State:
         self.pid = 'p0'
         # String
         self.oppid = 'p0'
-        # Maps of pokemon nicknames to their official designations
+        # Maps of pokemon nicknames to their official names
         self.friendly_name_map = {}
         self.opp_name_map = {}
+        # FeatureExtractor
+        self.feat_extractor = feat_extractor
 
     # Update the state based on a request message, required so that active pokemon are changed before the turn starts
     def update_from_request(self, data):
@@ -381,6 +385,17 @@ class State:
             return []
         else:
             return self.friendly_active_mon.get_usable_moves()
+
+    def get_valid_actions(self):
+        moves = self.get_valid_moves()
+        switches = self.get_valid_switches()
+        actions = [('move', act) for act in moves]
+        actions.extend([('switch', act) for act in switches])
+
+        return actions
+
+    def get_features(self, action):
+        return self.feat_extractor.extract_features(self, action)
 
 
 # A class to hold the information about a pokemon
