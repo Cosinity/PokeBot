@@ -1,0 +1,50 @@
+{
+  "poipole": {
+    "hp": 67,
+    "attack": 73,
+    "defense": 67,
+    "special-attack": 73,
+    "special-defense": 67,
+    "speed": 73
+  },
+  "naganadel": {
+    "hp": 73,
+    "attack": 73,
+    "defense": 73,
+    "special-attack": 127,
+    "special-defense": 73,
+    "speed": 121
+  },
+  "stakataka": {
+    "hp": 61,
+    "attack": 131,
+    "defense": 211,
+    "special-attack": 53,
+    "special-defense": 101,
+    "speed": 13
+  },
+  "blacephalon": {
+    "hp": 53,
+    "attack": 127,
+    "defense": 53,
+    "special-attack": 151,
+    "special-defense": 79,
+    "speed": 107
+  },
+  "zeraora": {
+    "hp": 88,
+    "attack": 112,
+    "defense": 75,
+    "special-attack": 102,
+    "special-defense": 80,
+    "speed": 143
+  },
+  "lycanroc-dusk": {
+    "hp": 75,
+    "attack": 117,
+    "defense": 65,
+    "special-attack": 55,
+    "special-defense": 65,
+    "speed": 110
+  }
+}

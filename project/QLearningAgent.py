@@ -7,20 +7,20 @@ from collections import defaultdict
 
 
 class Agent:
-    def __init__(self, epsilon=0.05, gamma=0.8, alpha=0.2, num_training=0):
+    def __init__(self, epsilon=0.05, gamma=0.9, alpha=0.2):
         print("Q-Learning agent initiated")
         self.learn_rate = epsilon
         self.discount = gamma
         self.alpha = alpha
-        self.num_training = num_training
         self.weights = defaultdict(float)
 
     # Find the action with the highest Q value in the given state
     def get_best_action(self, state):
         actions = state.get_valid_actions()
 
-        best_act_idx = numpy.argmax([self.get_q_value(state, action) for action in actions])[0]
-        return actions[best_act_idx]
+        max_value = max([self.get_q_value(state, a) for a in actions])
+        best_actions = [a for a in actions if self.get_q_value(state, a) == max_value]
+        return random.choice(best_actions)
 
     # Choose a random action with probability epsilon, otherwise choose the best action found so far
     def choose_action(self, state):
@@ -37,9 +37,9 @@ class Agent:
 
     # Update the Q-Values
     def update(self, state, action, next_state, reward):
-        difference = (reward + self.discount *
-                      max([self.get_q_value(next_state, act) for act in next_state.get_valid_actions()])) -\
-                     self.get_q_value(state, action)
+        next_actions = next_state.get_valid_actions()
+        max_next_action = 0 if not next_actions else max([self.get_q_value(next_state, act) for act in next_actions])
+        difference = (reward + self.discount * max_next_action) - self.get_q_value(state, action)
         features = state.get_features()
         for f in features:
             self.weights[f] = self.weights[f] + self.alpha * difference * features[f]
