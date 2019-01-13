@@ -1,0 +1,12 @@
+D:\Users\Andrew\My Projects\PokeBot\PokeBotC\bin\Debug\PokeBotC.exe.config
+D:\Users\Andrew\My Projects\PokeBot\PokeBotC\bin\Debug\PokeBotC.exe
+D:\Users\Andrew\My Projects\PokeBot\PokeBotC\bin\Debug\PokeBotC.pdb
+D:\Users\Andrew\My Projects\PokeBot\PokeBotC\bin\Debug\Newtonsoft.Json.dll
+D:\Users\Andrew\My Projects\PokeBot\PokeBotC\bin\Debug\websocket-sharp.dll
+D:\Users\Andrew\My Projects\PokeBot\PokeBotC\bin\Debug\Newtonsoft.Json.pdb
+D:\Users\Andrew\My Projects\PokeBot\PokeBotC\bin\Debug\Newtonsoft.Json.xml
+D:\Users\Andrew\My Projects\PokeBot\PokeBotC\obj\Debug\PokeBotC.csprojAssemblyReference.cache
+D:\Users\Andrew\My Projects\PokeBot\PokeBotC\obj\Debug\PokeBotC.csproj.CoreCompileInputs.cache
+D:\Users\Andrew\My Projects\PokeBot\PokeBotC\obj\Debug\PokeBotC.csproj.CopyComplete
+D:\Users\Andrew\My Projects\PokeBot\PokeBotC\obj\Debug\PokeBotC.exe
+D:\Users\Andrew\My Projects\PokeBot\PokeBotC\obj\Debug\PokeBotC.pdb
