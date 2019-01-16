@@ -9,40 +9,40 @@ using System.Diagnostics;
 namespace PokeBotC
 {
 	public static class Globals {
-		public static bool verbose = false;
+		public static bool verbose = true;
+		public static HttpClient httpClient = new HttpClient();
 	}
 
-	class Bot {
-		private readonly WebSocket client;
+	public class Client {
+		private readonly WebSocket wsCLient;
 		private readonly HttpClient httpClient;
 		private readonly string username;
 		private readonly string password;
 		private int rqid;
 
-		public Bot(string name, string pass, HttpClient httpC, string server = "ws://sim.smogon.com:8000/showdown/websocket") {
-			client = new WebSocket(server);
-			httpClient = httpC;
+		public Client(string name, string pass, string server = "ws://sim.smogon.com:8000/showdown/websocket") {
+			wsCLient = new WebSocket(server);
 			username = name;
 			password = pass;
 			rqid = -1;
 			
-			client.OnOpen += (sender, e) =>
+			wsCLient.OnOpen += (sender, e) =>
 			{
-				Debug.WriteLine("### opened ###");
+				Console.WriteLine("### opened ###");
 			};
-			client.OnClose += (sender, e) =>
+			wsCLient.OnClose += (sender, e) =>
 			{
-				Debug.WriteLine("### closed ###");
+				Console.WriteLine("### closed ###");
 			};
-			client.OnError += (sender, e) =>
+			wsCLient.OnError += (sender, e) =>
 			{
-				Debug.WriteLine(e.Message);
+				Console.WriteLine(e.Message);
 			};
 
-			client.OnMessage += (sender, e) => {
+			wsCLient.OnMessage += (sender, e) => {
 				string msg = e.Data;
 				if (Globals.verbose) {
-					Debug.WriteLine("{0} << {1}", this.username, msg);
+					Console.WriteLine("{0} << {1}", this.username, msg);
 				}
 				
 				// We've just connected to the server and it's given us the challenge string to log in
@@ -77,22 +77,52 @@ namespace PokeBotC
 							}
 						}
 					}
+
+					// Check if there was an error in the response and handle it
+					else if (msg.Contains("|error|")) {
+						var errIdx = msg.IndexOf("|error|") + 7;
+						var curErr = msg.Substring(errIdx);
+						Console.WriteLine("Error from server: {0}", curErr);
+
+						// If we made an invalid choice, try again
+						if (curErr.Contains("Invalid choice")) {
+							// TODO (var action, var actIdx) = this.GetAction();
+							// TODO this.send(String.Format("{0}|/choose {1} {2}|{3}", room, action, actIdx, this.rqid);
+						}
+					}
+
+					// If it's any other type of message (usually a turn upkeep message), pass it to the state to update accordingly
+					else {
+						// TODO this.curState.update(msg);
+					}
 				}
 			};
 		}
 
-		public void Run() {
-			using (var ws = this.client) {
-				this.client.Connect();
-				while (true) { }
+		/// <summary>
+		/// Runs the client for the specified amount of time
+		/// </summary>
+		/// <param name="cycles">OPTIONAL How many cycles the client should run for. If this is not supplied, client will run indefinitely.</param>
+		/// <param name="timeType">OPTIONAL What type of cycle the client will use. If this parameter is "iterations" then the client will run for the specified number of battles.
+		/// Otherwise, it runs for the specified number of seconds.</param>
+		public void Run(int cycles = -1, string timeType = "time") {
+			using (var ws = this.wsCLient) {
+				this.wsCLient.Connect();
+				if (cycles < 0) {
+					while (true) { }
+				} else if (timeType == "iterations") {
+					// TODO fill this out
+				} else {
+					Thread.Sleep(cycles * 1000);
+				}
 			}
 		}
 
 		private void Send(string msg) {
 			if (Globals.verbose) {
-				Debug.WriteLine("{0} >> {1}", this.username, msg);
+				Console.WriteLine("{0} >> {1}", this.username, msg);
 			}
-			this.client.Send(msg);
+			this.wsCLient.Send(msg);
 		}
 
 		async private void Login(string challstr) {
@@ -105,7 +135,7 @@ namespace PokeBotC
 			};
 
 			var content = new FormUrlEncodedContent(data);
-			var resp = await this.httpClient.PostAsync("http://play.pokemonshowdown.com/action.php", content);
+			var resp = await Globals.httpClient.PostAsync("http://play.pokemonshowdown.com/action.php", content);
 
 			var responseString = (await resp.Content.ReadAsStringAsync()).Substring(1);
 
@@ -116,14 +146,15 @@ namespace PokeBotC
 	}
 
 	class Run {
-		private static readonly HttpClient httpClient = new HttpClient();
-
 		static void Main(string[] args) {
 			foreach (string s in args) {
 				if (s.Contains("verbose")) {
 					Globals.verbose = Convert.ToBoolean(s.Substring(s.IndexOf(':')+1));
 				}
 			}
+
+			var bot1 = new Client("pokebot_train_1", "password");
+			bot1.Run();
 		}
 	}
 }
